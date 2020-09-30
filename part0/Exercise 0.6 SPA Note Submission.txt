@@ -1,0 +1,11 @@
+title SPA Note Submission
+
+note over Client
+on submit, browser updates 
+local array of notes and sends 
+the following request to the 
+server (to persist the data)
+end note
+
+Client->Server: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+Server-->Client: Status: 201 Created

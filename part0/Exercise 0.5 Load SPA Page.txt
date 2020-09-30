@@ -1,0 +1,10 @@
+title Load SPA Page
+
+Client->Server: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa
+Server-->Client: Server returns HTML which triggers the following requests
+Client->Server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+Server-->Client: Server returns main.css
+Client->Server: HTTP GET https://fullstack-exampleapp.herokuapp.com/spa.js
+Server-->Client: Server returns spa.js
+Client->Server: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+Server-->Client: Server returns data.json

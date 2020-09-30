@@ -1,0 +1,12 @@
+title Note Submission
+
+Client->Server: HTTP POST request with form payload
+Server-->Client: Status: 302 (redirect) /notes (reload the page)
+Client->Server: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes
+Server-->Client: Server returns HTML which triggers the following requests:
+Client->Server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+Server-->Client: Server returns main.css
+Client->Server: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.js
+Server-->Client: Server returns main.js
+Client->Server: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+Server-->Client: Server returns data.json
