@@ -8,12 +8,16 @@ const App = () => {
     event.preventDefault();
     console.log("button clicked", event.target);
 
-    const nameObj = {
-      name: newName,
-    };
+    if (persons.find((match) => match.name === newName)) {
+      alert(`${newName} already exists in the phonebook.`);
+    } else {
+      const nameObj = {
+        name: newName,
+      };
 
-    setPersons(persons.concat(nameObj));
-    setNewName("");
+      setPersons(persons.concat(nameObj));
+      setNewName("");
+    }
   };
 
   const handleNameChange = (event) => {
