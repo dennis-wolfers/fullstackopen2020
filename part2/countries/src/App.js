@@ -7,7 +7,7 @@ const Filter = (props) => {
     <>
       <form>
         <div>
-          find countries
+          find countries{" "}
           <input value={props.filter} onChange={props.onChange()} />
         </div>
       </form>
@@ -17,11 +17,34 @@ const Filter = (props) => {
 
 const FilteredCountries = (props) => {
   if (props.countries.length === 1) {
-    return <h1>{props.countries[0].name}</h1>;
+    let country = props.countries[0];
+
+    return (
+      <>
+        <h2>{country.name}</h2>
+        <p>Capital: {country.capital}</p>
+        <p>Population: {country.population.toLocaleString()}</p>
+        <h3>Languages</h3>
+        <ul>
+          {country.languages.map((language) => (
+            <li>
+              {language.name} ({language.nativeName})
+            </li>
+          ))}
+        </ul>
+        <img src={country.flag} alt="flag" />
+      </>
+    );
   }
 
   if (props.countries.length > 10) {
-    return <p>Too many matches, make your filter more specific.</p>;
+    return (
+      <p>{props.countries.length} country names contain your filter string.</p>
+    );
+  }
+
+  if (props.countries.length === 0) {
+    return <p>No matches.</p>;
   }
 
   return (
