@@ -2,6 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
+const Button = (props) => (
+  <div>
+    <button id={props.id} onClick={props.handleClick}>
+      {props.text}
+    </button>
+  </div>
+);
+
 const Filter = (props) => {
   return (
     <>
@@ -19,22 +27,7 @@ const FilteredCountries = (props) => {
   if (props.countries.length === 1) {
     let country = props.countries[0];
 
-    return (
-      <>
-        <h2>{country.name}</h2>
-        <p>Capital: {country.capital}</p>
-        <p>Population: {country.population.toLocaleString()}</p>
-        <h3>Languages</h3>
-        <ul>
-          {country.languages.map((language) => (
-            <li>
-              {language.name} ({language.nativeName})
-            </li>
-          ))}
-        </ul>
-        <img src={country.flag} alt="flag" />
-      </>
-    );
+    return <Country country={country} />;
   }
 
   if (props.countries.length > 10) {
@@ -48,10 +41,38 @@ const FilteredCountries = (props) => {
   }
 
   return (
-    <>
+    <div>
       {props.countries.map((country) => (
-        <p key={country.name}>{country.name}</p>
+        <div key={country.name}>
+          <p>{country.name}</p>
+          <Button
+            id={country.name}
+            handleClick={props.handleClick()}
+            text="show"
+          />
+        </div>
       ))}
+    </div>
+  );
+};
+
+const Country = (props) => {
+  const country = props.country;
+
+  return (
+    <>
+      <h2>{country.name}</h2>
+      <p>Capital: {country.capital}</p>
+      <p>Population: {country.population.toLocaleString()}</p>
+      <h3>Languages</h3>
+      <ul>
+        {country.languages.map((language) => (
+          <li key={language.name}>
+            {language.name} ({language.nativeName})
+          </li>
+        ))}
+      </ul>
+      <img src={country.flag} alt="flag" />
     </>
   );
 };
@@ -72,13 +93,20 @@ function App() {
   };
 
   const filteredCountries = countries.filter(
-    (country) => country.name.toLowerCase().indexOf(filter) > -1
+    (country) => country.name.toLowerCase().indexOf(filter.toLowerCase()) > -1
   );
+
+  const handleClick = (event) => {
+    setFilter(event.target.id);
+  };
 
   return (
     <div>
       <Filter filter={filter} onChange={() => handleFilterChange} />
-      <FilteredCountries countries={filteredCountries} />
+      <FilteredCountries
+        handleClick={() => handleClick}
+        countries={filteredCountries}
+      />
     </div>
   );
 }
