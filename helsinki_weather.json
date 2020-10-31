@@ -1,0 +1,39 @@
+{
+  "request": {
+    "type": "City",
+    "query": "Helsinki, Finland",
+    "language": "en",
+    "unit": "m"
+  },
+  "location": {
+    "name": "Helsinki",
+    "country": "Finland",
+    "region": "Southern Finland",
+    "lat": "60.176",
+    "lon": "24.934",
+    "timezone_id": "Europe/Helsinki",
+    "localtime": "2020-10-31 22:05",
+    "localtime_epoch": 1604181900,
+    "utc_offset": "2.0"
+  },
+  "current": {
+    "observation_time": "08:05 PM",
+    "temperature": 5,
+    "weather_code": 143,
+    "weather_icons": [
+      "https://assets.weatherstack.com/images/wsymbols01_png_64/wsymbol_0006_mist.png"
+    ],
+    "weather_descriptions": ["Mist"],
+    "wind_speed": 4,
+    "wind_degree": 120,
+    "wind_dir": "ESE",
+    "pressure": 1025,
+    "precip": 0.1,
+    "humidity": 100,
+    "cloudcover": 75,
+    "feelslike": 3,
+    "uv_index": 1,
+    "visibility": 3,
+    "is_day": "no"
+  }
+}

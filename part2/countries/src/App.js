@@ -58,6 +58,16 @@ const FilteredCountries = (props) => {
 
 const Country = (props) => {
   const country = props.country;
+  const [weather, setWeather] = useState([])
+  const [weatherImages, setWeatherImages] = useState([])
+  const apiKey = process.env.REACT_APP_API_KEY
+
+  useEffect(() => {
+    axios.get("http://api.weatherstack.com/current?access_key=" + apiKey + "&query=" + country.name).then((response) => {
+      setWeather(response.data.current);
+      setWeatherImages(response.data.current.weather_icons)
+    });
+  }, []);
 
   return (
     <>
@@ -73,6 +83,10 @@ const Country = (props) => {
         ))}
       </ul>
       <img src={country.flag} alt="flag" />
+      <h3>Weather in {country.capital}</h3>
+      <img src={weatherImages[0]} alt="weather depiction" />
+      <p>temperature: {weather.temperature}&deg;c</p>
+      <p>wind: {weather.wind_speed} kph from the {weather.wind_dir}</p>
     </>
   );
 };
