@@ -16,14 +16,14 @@ const Filter = (props) => {
 
 const AddEntry = (props) => {
   return (
-    <form onSubmit={props.addName()}>
+    <form onSubmit={props.addName}>
       <div>
         name:{" "}
-        <input value={props.newName} onChange={props.handleNameChange()} />
+        <input value={props.newName} onChange={props.handleNameChange} />
       </div>
       <div>
         phone:{" "}
-        <input value={props.newPhone} onChange={props.handlePhoneChange()} />
+        <input value={props.newPhone} onChange={props.handlePhoneChange} />
       </div>
       <div>
         <button type="submit">add</button>
@@ -80,10 +80,13 @@ const App = (props) => {
         name: newName,
         number: newPhone,
       };
-
-      setPersons(persons.concat(nameObj));
+axios.post("http://localhost:3001/persons", nameObj).then(response => {
+  console.log(response.data)
+  setPersons(persons.concat(nameObj));
       setNewName("");
       setNewPhone("");
+})
+      
     }
   };
 
@@ -105,9 +108,9 @@ const App = (props) => {
       <Filter filter={filter} onChange={() => handleFilterChange} />
       <h2>Add a new</h2>
       <AddEntry
-        addName={() => addName}
-        handleNameChange={() => handleNameChange}
-        handlePhoneChange={() => handlePhoneChange}
+        addName={addName}
+        handleNameChange={handleNameChange}
+        handlePhoneChange={handlePhoneChange}
         newName={newName}
         newPhone={newPhone}
       />
