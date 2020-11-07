@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 
 const Filter = (props) => {
   return (
@@ -18,8 +18,7 @@ const AddEntry = (props) => {
   return (
     <form onSubmit={props.addName}>
       <div>
-        name:{" "}
-        <input value={props.newName} onChange={props.handleNameChange} />
+        name: <input value={props.newName} onChange={props.handleNameChange} />
       </div>
       <div>
         phone:{" "}
@@ -35,7 +34,7 @@ const AddEntry = (props) => {
 const SingleEntry = (props) => {
   return (
     <>
-      <p key={props.person.key}>
+      <p>
         {props.person.name} {props.person.number}
       </p>
     </>
@@ -46,7 +45,7 @@ const FilteredEntries = (props) => {
   return (
     <>
       {props.persons.map((person) => (
-        <SingleEntry person={person} />
+        <SingleEntry key={person.id} person={person} />
       ))}
     </>
   );
@@ -59,10 +58,8 @@ const App = (props) => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
+    personService.getAll().then((initPersons) => {
+      setPersons(initPersons);
     });
   }, []);
 
@@ -80,13 +77,11 @@ const App = (props) => {
         name: newName,
         number: newPhone,
       };
-axios.post("http://localhost:3001/persons", nameObj).then(response => {
-  console.log(response.data)
-  setPersons(persons.concat(nameObj));
-      setNewName("");
-      setNewPhone("");
-})
-      
+      personService.create(nameObj).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewPhone("");
+      });
     }
   };
 
