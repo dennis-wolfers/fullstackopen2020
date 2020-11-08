@@ -45,11 +45,13 @@ const SingleEntry = (props) => {
 };
 
 const handleClick = (props) => {
-  personService.deleteEntry(props.person.id).then(() => {
-    personService.getAll().then((initPersons) => {
-      props.setPersons(initPersons);
+  if (window.confirm(`Delete ${props.person.name}?`)) {
+    personService.deleteEntry(props.person.id).then(() => {
+      personService.getAll().then((initPersons) => {
+        props.setPersons(initPersons);
+      });
     });
-  });
+  }
 };
 
 const FilteredEntries = (props) => {
