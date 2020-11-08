@@ -1,39 +1,19 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": 1
-    },
-    {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
+      "name": "sue",
+      "number": "two",
       "id": 2
     },
     {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": 3
-    },
-    {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
+      "name": "dave",
+      "number": "four",
       "id": 4
     },
     {
-      "name": "bill the cat",
-      "number": "12345",
+      "name": "Albus",
+      "number": "zero",
       "id": 5
-    },
-    {
-      "name": "bilbo",
-      "number": "0 00 000",
-      "id": 6
-    },
-    {
-      "name": "frodo",
-      "number": "1 11 111",
-      "id": 7
     }
   ]
 }

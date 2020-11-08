@@ -35,17 +35,33 @@ const SingleEntry = (props) => {
   return (
     <>
       <p>
-        {props.person.name} {props.person.number}
+        {props.person.name} {props.person.number}{" "}
+        <button id={props.person.id} onClick={() => handleClick(props)}>
+          delete
+        </button>
       </p>
     </>
   );
+};
+
+const handleClick = (props) => {
+  personService.deleteEntry(props.person.id).then(() => {
+    personService.getAll().then((initPersons) => {
+      props.setPersons(initPersons);
+    });
+  });
 };
 
 const FilteredEntries = (props) => {
   return (
     <>
       {props.persons.map((person) => (
-        <SingleEntry key={person.id} person={person} />
+        <SingleEntry
+          key={person.id}
+          person={person}
+          setPersons={props.setPersons}
+          persons={props.persons}
+        />
       ))}
     </>
   );
@@ -110,7 +126,7 @@ const App = (props) => {
         newPhone={newPhone}
       />
       <h2>Numbers</h2>
-      <FilteredEntries persons={filteredPersons} />
+      <FilteredEntries setPersons={setPersons} persons={filteredPersons} />
     </div>
   );
 };
