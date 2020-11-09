@@ -89,7 +89,10 @@ const App = (props) => {
     event.preventDefault();
 
     if (persons.find((match) => match.name === newName)) {
-      alert(`${newName} already exists in the phonebook.`);
+      //      alert(`${newName} already exists in the phonebook.`);
+      if (window.confirm(`Change number for ${newName}?`)) {
+        console.log("change number");
+      }
     } else {
       const nameObj = {
         name: newName,
