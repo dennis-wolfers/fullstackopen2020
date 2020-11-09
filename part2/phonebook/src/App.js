@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import personService from "./services/persons";
 
 const Filter = (props) => {
   return (
@@ -16,14 +16,13 @@ const Filter = (props) => {
 
 const AddEntry = (props) => {
   return (
-    <form onSubmit={props.addName()}>
+    <form onSubmit={props.addName}>
       <div>
-        name:{" "}
-        <input value={props.newName} onChange={props.handleNameChange()} />
+        name: <input value={props.newName} onChange={props.handleNameChange} />
       </div>
       <div>
         phone:{" "}
-        <input value={props.newPhone} onChange={props.handlePhoneChange()} />
+        <input value={props.newPhone} onChange={props.handlePhoneChange} />
       </div>
       <div>
         <button type="submit">add</button>
@@ -35,18 +34,36 @@ const AddEntry = (props) => {
 const SingleEntry = (props) => {
   return (
     <>
-      <p key={props.person.key}>
-        {props.person.name} {props.person.number}
+      <p>
+        {props.person.name} {props.person.number}{" "}
+        <button id={props.person.id} onClick={() => handleClick(props)}>
+          delete
+        </button>
       </p>
     </>
   );
+};
+
+const handleClick = (props) => {
+  if (window.confirm(`Delete ${props.person.name}?`)) {
+    personService.deleteEntry(props.person.id).then(() => {
+      personService.getAll().then((initPersons) => {
+        props.setPersons(initPersons);
+      });
+    });
+  }
 };
 
 const FilteredEntries = (props) => {
   return (
     <>
       {props.persons.map((person) => (
-        <SingleEntry person={person} />
+        <SingleEntry
+          key={person.id}
+          person={person}
+          setPersons={props.setPersons}
+          persons={props.persons}
+        />
       ))}
     </>
   );
@@ -59,10 +76,8 @@ const App = (props) => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
+    personService.getAll().then((initPersons) => {
+      setPersons(initPersons);
     });
   }, []);
 
@@ -74,16 +89,20 @@ const App = (props) => {
     event.preventDefault();
 
     if (persons.find((match) => match.name === newName)) {
-      alert(`${newName} already exists in the phonebook.`);
+      //      alert(`${newName} already exists in the phonebook.`);
+      if (window.confirm(`Change number for ${newName}?`)) {
+        console.log("change number");
+      }
     } else {
       const nameObj = {
         name: newName,
         number: newPhone,
       };
-
-      setPersons(persons.concat(nameObj));
-      setNewName("");
-      setNewPhone("");
+      personService.create(nameObj).then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewPhone("");
+      });
     }
   };
 
@@ -105,14 +124,14 @@ const App = (props) => {
       <Filter filter={filter} onChange={() => handleFilterChange} />
       <h2>Add a new</h2>
       <AddEntry
-        addName={() => addName}
-        handleNameChange={() => handleNameChange}
-        handlePhoneChange={() => handlePhoneChange}
+        addName={addName}
+        handleNameChange={handleNameChange}
+        handlePhoneChange={handlePhoneChange}
         newName={newName}
         newPhone={newPhone}
       />
       <h2>Numbers</h2>
-      <FilteredEntries persons={filteredPersons} />
+      <FilteredEntries setPersons={setPersons} persons={filteredPersons} />
     </div>
   );
 };
