@@ -88,22 +88,31 @@ const App = (props) => {
   const addName = (event) => {
     event.preventDefault();
 
+    const nameObj = {
+      name: newName,
+      number: newPhone,
+    };
+
     if (persons.find((match) => match.name === newName)) {
+      let existingPerson = persons.filter(
+        (person) => person.name === newName
+      )[0];
       //      alert(`${newName} already exists in the phonebook.`);
       if (window.confirm(`Change number for ${newName}?`)) {
         console.log("change number");
+        personService.update(existingPerson.id, nameObj).then(() => {
+          personService.getAll().then((initPersons) => {
+            setPersons(initPersons);
+          });
+        });
       }
     } else {
-      const nameObj = {
-        name: newName,
-        number: newPhone,
-      };
       personService.create(nameObj).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
-        setNewName("");
-        setNewPhone("");
       });
     }
+    setNewName("");
+    setNewPhone("");
   };
 
   const handleFilterChange = (event) => {
