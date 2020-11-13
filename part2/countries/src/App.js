@@ -93,6 +93,7 @@ const Country = (props) => {
 
 function App() {
   const [countries, setCountries] = useState([]);
+  const [weather, setWeather] = useState([]);
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
@@ -113,6 +114,26 @@ function App() {
   const handleClick = (event) => {
     setFilter(event.target.id);
   };
+
+  useEffect(() => {
+    const params = {
+      access_key: "REACT_APP_WEATHERSTACK",
+      query: "New York",
+    };
+
+    axios
+      .get("https://api.weatherstack.com/current", { params })
+      .then((response) => {
+        const apiResponse = response.data;
+        console.log(
+          `Current temperature in ${apiResponse.location.name} is ${apiResponse.current.temperature}℃`
+        );
+        setWeather(apiResponse);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   return (
     <div>
