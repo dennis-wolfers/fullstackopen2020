@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import personService from "./services/persons";
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className="notification">{message}</div>;
+};
+
 const Filter = (props) => {
   return (
     <>
@@ -45,13 +53,17 @@ const SingleEntry = (props) => {
 };
 
 const handleClick = (props) => {
-  if (window.confirm(`Delete ${props.person.name}?`)) {
-    personService.deleteEntry(props.person.id).then(() => {
-      personService.getAll().then((initPersons) => {
-        props.setPersons(initPersons);
-      });
+  //  if (window.confirm(`Delete ${props.person.name}?`)) {
+  props.setNotificationMessage(`${props.person.name} deleted.`);
+  personService.deleteEntry(props.person.id).then(() => {
+    personService.getAll().then((initPersons) => {
+      props.setPersons(initPersons);
     });
-  }
+  });
+  setTimeout(() => {
+    props.setNotificationMessage(null);
+  }, 5000);
+  //  }
 };
 
 const FilteredEntries = (props) => {
@@ -63,6 +75,7 @@ const FilteredEntries = (props) => {
           person={person}
           setPersons={props.setPersons}
           persons={props.persons}
+          setNotificationMessage={props.setNotificationMessage}
         />
       ))}
     </>
@@ -74,6 +87,7 @@ const App = (props) => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [filter, setFilter] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((initPersons) => {
@@ -87,32 +101,31 @@ const App = (props) => {
 
   const addName = (event) => {
     event.preventDefault();
-
     const nameObj = {
       name: newName,
       number: newPhone,
     };
 
     if (persons.find((match) => match.name === newName)) {
-      let existingPerson = persons.filter(
-        (person) => person.name === newName
-      )[0];
-      //      alert(`${newName} already exists in the phonebook.`);
-      if (window.confirm(`Change number for ${newName}?`)) {
-        console.log("change number");
-        personService.update(existingPerson.id, nameObj).then(() => {
-          personService.getAll().then((initPersons) => {
-            setPersons(initPersons);
-          });
-        });
-      }
+      setNotificationMessage(`Number for ${newName} changed.`);
+      let id = persons.find((person) => person.name === newName).id;
+      personService.update(id, nameObj).then(() =>
+        personService.getAll().then((initPersons) => {
+          setPersons(initPersons);
+        })
+      );
+      setNewName("");
+      setNewPhone("");
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 5000);
     } else {
       personService.create(nameObj).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewPhone("");
       });
     }
-    setNewName("");
-    setNewPhone("");
   };
 
   const handleFilterChange = (event) => {
@@ -140,7 +153,12 @@ const App = (props) => {
         newPhone={newPhone}
       />
       <h2>Numbers</h2>
-      <FilteredEntries setPersons={setPersons} persons={filteredPersons} />
+      <FilteredEntries
+        setPersons={setPersons}
+        persons={filteredPersons}
+        setNotificationMessage={setNotificationMessage}
+      />
+      <Notification message={notificationMessage} />
     </div>
   );
 };
