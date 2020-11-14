@@ -16,19 +16,9 @@
       "id": 6
     },
     {
-      "name": "huey",
-      "number": "four",
+      "name": "bill",
+      "number": "666",
       "id": 7
-    },
-    {
-      "name": "dewey",
-      "number": "five",
-      "id": 8
-    },
-    {
-      "name": "lewey",
-      "number": "six",
-      "id": 9
     }
   ]
 }

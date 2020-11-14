@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import personService from "./services/persons";
 
-const Notification = ({ message }) => {
+const Notification = ({ message, isError }) => {
   if (message === null) {
     return null;
   }
-
-  return <div className="notification">{message}</div>;
+  let classPicker = isError ? "error" : "notification";
+  return <div className={classPicker}>{message}</div>;
 };
 
 const Filter = (props) => {
@@ -53,17 +53,30 @@ const SingleEntry = (props) => {
 };
 
 const handleClick = (props) => {
-  //  if (window.confirm(`Delete ${props.person.name}?`)) {
-  props.setNotificationMessage(`${props.person.name} deleted.`);
-  personService.deleteEntry(props.person.id).then(() => {
-    personService.getAll().then((initPersons) => {
-      props.setPersons(initPersons);
+  personService
+    .deleteEntry(props.person.id)
+    .then(() => {
+      props.setNotificationMessage(`${props.person.name} deleted.`);
+      personService.getAll().then((initPersons) => {
+        props.setPersons(initPersons);
+      });
+      setTimeout(() => {
+        props.setNotificationMessage(null);
+      }, 5000);
+    })
+    .catch(() => {
+      props.setIsError(true);
+      props.setNotificationMessage(`${props.person.name} was already deleted.`);
+      personService.getAll().then((initPersons) => {
+        props.setPersons(initPersons);
+      });
+      setTimeout(() => {
+        props.setNotificationMessage(null);
+        props.setIsError(false);
+      }, 5000);
     });
-  });
-  setTimeout(() => {
-    props.setNotificationMessage(null);
-  }, 5000);
-  //  }
+  props.setNewName("");
+  props.setNewPhone("");
 };
 
 const FilteredEntries = (props) => {
@@ -76,6 +89,9 @@ const FilteredEntries = (props) => {
           setPersons={props.setPersons}
           persons={props.persons}
           setNotificationMessage={props.setNotificationMessage}
+          setIsError={props.setIsError}
+          setNewName={props.setNewName}
+          setNewPhone={props.setNewPhone}
         />
       ))}
     </>
@@ -88,6 +104,7 @@ const App = (props) => {
   const [newPhone, setNewPhone] = useState("");
   const [filter, setFilter] = useState("");
   const [notificationMessage, setNotificationMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     personService.getAll().then((initPersons) => {
@@ -107,18 +124,34 @@ const App = (props) => {
     };
 
     if (persons.find((match) => match.name === newName)) {
-      setNotificationMessage(`Number for ${newName} changed.`);
       let id = persons.find((person) => person.name === newName).id;
-      personService.update(id, nameObj).then(() =>
-        personService.getAll().then((initPersons) => {
-          setPersons(initPersons);
+
+      personService
+        .update(id, nameObj)
+        .then(() => {
+          setNotificationMessage(`Number for ${newName} changed.`);
+          personService.getAll().then((initPersons) => {
+            setPersons(initPersons);
+          });
+          setNewName("");
+          setNewPhone("");
+          setTimeout(() => {
+            setNotificationMessage(null);
+          }, 5000);
         })
-      );
-      setNewName("");
-      setNewPhone("");
-      setTimeout(() => {
-        setNotificationMessage(null);
-      }, 5000);
+        .catch(() => {
+          setIsError(true);
+          setNotificationMessage(`${newName} is no longer in the database.`);
+          personService.getAll().then((initPersons) => {
+            setPersons(initPersons);
+          });
+          setNewName("");
+          setNewPhone("");
+          setTimeout(() => {
+            setNotificationMessage(null);
+            setIsError(false);
+          }, 5000);
+        });
     } else {
       personService.create(nameObj).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
@@ -157,8 +190,11 @@ const App = (props) => {
         setPersons={setPersons}
         persons={filteredPersons}
         setNotificationMessage={setNotificationMessage}
+        setIsError={setIsError}
+        setNewName={setNewName}
+        setNewPhone={setNewPhone}
       />
-      <Notification message={notificationMessage} />
+      <Notification message={notificationMessage} isError={isError} />
     </div>
   );
 };
