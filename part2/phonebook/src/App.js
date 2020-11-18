@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import personService from "./services/persons";
 
+const Notification = ({ message, isError }) => {
+  if (message === null) {
+    return null;
+  }
+  let classPicker = isError ? "error" : "notification";
+  return <div className={classPicker}>{message}</div>;
+};
+
 const Filter = (props) => {
   return (
     <>
@@ -45,13 +53,30 @@ const SingleEntry = (props) => {
 };
 
 const handleClick = (props) => {
-  if (window.confirm(`Delete ${props.person.name}?`)) {
-    personService.deleteEntry(props.person.id).then(() => {
+  personService
+    .deleteEntry(props.person.id)
+    .then(() => {
+      props.setNotificationMessage(`${props.person.name} deleted.`);
       personService.getAll().then((initPersons) => {
         props.setPersons(initPersons);
       });
+      setTimeout(() => {
+        props.setNotificationMessage(null);
+      }, 5000);
+    })
+    .catch(() => {
+      props.setIsError(true);
+      props.setNotificationMessage(`${props.person.name} was already deleted.`);
+      personService.getAll().then((initPersons) => {
+        props.setPersons(initPersons);
+      });
+      setTimeout(() => {
+        props.setNotificationMessage(null);
+        props.setIsError(false);
+      }, 5000);
     });
-  }
+  props.setNewName("");
+  props.setNewPhone("");
 };
 
 const FilteredEntries = (props) => {
@@ -63,6 +88,10 @@ const FilteredEntries = (props) => {
           person={person}
           setPersons={props.setPersons}
           persons={props.persons}
+          setNotificationMessage={props.setNotificationMessage}
+          setIsError={props.setIsError}
+          setNewName={props.setNewName}
+          setNewPhone={props.setNewPhone}
         />
       ))}
     </>
@@ -74,6 +103,8 @@ const App = (props) => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [filter, setFilter] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     personService.getAll().then((initPersons) => {
@@ -87,32 +118,47 @@ const App = (props) => {
 
   const addName = (event) => {
     event.preventDefault();
-
     const nameObj = {
       name: newName,
       number: newPhone,
     };
 
     if (persons.find((match) => match.name === newName)) {
-      let existingPerson = persons.filter(
-        (person) => person.name === newName
-      )[0];
-      //      alert(`${newName} already exists in the phonebook.`);
-      if (window.confirm(`Change number for ${newName}?`)) {
-        console.log("change number");
-        personService.update(existingPerson.id, nameObj).then(() => {
+      let id = persons.find((person) => person.name === newName).id;
+
+      personService
+        .update(id, nameObj)
+        .then(() => {
+          setNotificationMessage(`Number for ${newName} changed.`);
           personService.getAll().then((initPersons) => {
             setPersons(initPersons);
           });
+          setNewName("");
+          setNewPhone("");
+          setTimeout(() => {
+            setNotificationMessage(null);
+          }, 5000);
+        })
+        .catch(() => {
+          setIsError(true);
+          setNotificationMessage(`${newName} is no longer in the database.`);
+          personService.getAll().then((initPersons) => {
+            setPersons(initPersons);
+          });
+          setNewName("");
+          setNewPhone("");
+          setTimeout(() => {
+            setNotificationMessage(null);
+            setIsError(false);
+          }, 5000);
         });
-      }
     } else {
       personService.create(nameObj).then((returnedPerson) => {
         setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewPhone("");
       });
     }
-    setNewName("");
-    setNewPhone("");
   };
 
   const handleFilterChange = (event) => {
@@ -140,7 +186,15 @@ const App = (props) => {
         newPhone={newPhone}
       />
       <h2>Numbers</h2>
-      <FilteredEntries setPersons={setPersons} persons={filteredPersons} />
+      <FilteredEntries
+        setPersons={setPersons}
+        persons={filteredPersons}
+        setNotificationMessage={setNotificationMessage}
+        setIsError={setIsError}
+        setNewName={setNewName}
+        setNewPhone={setNewPhone}
+      />
+      <Notification message={notificationMessage} isError={isError} />
     </div>
   );
 };
