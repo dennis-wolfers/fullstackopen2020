@@ -153,11 +153,23 @@ const App = (props) => {
           }, 5000);
         });
     } else {
-      personService.create(nameObj).then((returnedPerson) => {
-        setPersons(persons.concat(returnedPerson));
-        setNewName("");
-        setNewPhone("");
-      });
+      personService
+        .create(nameObj)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setNewName("");
+          setNewPhone("");
+        })
+        .catch((error) => {
+          setIsError(true);
+          setNotificationMessage(error.response.data);
+          setNewName("");
+          setNewPhone("");
+          setTimeout(() => {
+            setNotificationMessage(null);
+            setIsError(false);
+          }, 5000);
+        });
     }
   };
 
