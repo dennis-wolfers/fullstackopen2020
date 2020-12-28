@@ -162,7 +162,7 @@ const App = (props) => {
         })
         .catch((error) => {
           setIsError(true);
-          setNotificationMessage(error.response.data);
+          setNotificationMessage(error.response.data.error);
           setNewName("");
           setNewPhone("");
           setTimeout(() => {
