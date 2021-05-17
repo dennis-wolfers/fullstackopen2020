@@ -9,12 +9,12 @@ const setToken = newToken => {
 
 const getAll = async () => {
   const config = {
-    headers: { Authentication: token }
+    headers: { Authorization: token }
   }
 
-  const request = await axios.get(baseUrl, config)
+  const response = await axios.get(baseUrl, config)
 
-  return request(response => response.data)
+  return response.data
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
