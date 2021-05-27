@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [isError, setIsError] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -42,6 +45,12 @@ const App = () => {
       setPassword('')
     } catch (exception) {
       console.error(exception)
+      setNotificationMessage('login credentials not recognized')
+      setIsError(true)
+      setTimeout(() => {
+        setNotificationMessage(null)
+        setIsError(false)
+      }, 5000)
     }
   }
 
@@ -64,8 +73,11 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
-      console.log('addedBlog', addedBlog)
       setBlogs(blogs.concat(addedBlog))
+      setNotificationMessage(`new blog added: ${newBlog.title} by ${newBlog.author}.`)
+      setTimeout(() => {
+        setNotificationMessage(null)
+      }, 5000)
     } catch (exception) {
       console.error(exception)
     }
@@ -75,6 +87,7 @@ const App = () => {
     return (
       <div>
       <h2>log in to application</h2>
+      <Notification message={ notificationMessage } isError={ isError } />
       <form onSubmit={handleLogin}>
         <div>
           username
@@ -103,6 +116,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={ notificationMessage } isError={ isError } />
       <p>{ user.name } logged in 
         <button onClick={ handleLogout }>logout</button>
       </p>
