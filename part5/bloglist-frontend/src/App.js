@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
@@ -13,6 +13,8 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedInUser')
@@ -58,6 +60,21 @@ const App = () => {
     window.localStorage.removeItem('loggedInUser')
   }
 
+  const addBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility()
+    const returnedBlog = await blogService.create(blogObject)
+    setBlogs(blogs.concat(returnedBlog))
+    setNotificationMessage(`new blog added: ${returnedBlog.title} by ${returnedBlog.author}.`)
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 5000)
+  }
+
+  const blogForm = () => (
+    <Togglable buttonLabel="create blog" ref={ blogFormRef }>
+      <BlogForm createBlog={ addBlog } />
+    </Togglable>
+  )
 
   if (user === null) {
     return (
@@ -96,17 +113,7 @@ const App = () => {
       <p>{ user.name } logged in 
         <button onClick={ handleLogout }>logout</button>
       </p>
-      <Togglable buttonLabel='create blog'>
-        <BlogForm 
-          onSubmit={ addBlog }
-          title={ title }
-          author={ author }
-          url={ url }
-          setTitle={ setTitle }
-          setAuthor={ setAuthor }
-          setUrl={ setUrl }
-        />
-      </Togglable>
+      {blogForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
