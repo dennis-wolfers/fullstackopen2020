@@ -25,7 +25,7 @@ const Blog = ({blog, user}) => {
           <br/>
           {blog.url}<br/>
           likes: {blog.likes} <button>like</button><br/>
-          {user.name}
+          {blog.user.id}
         </span>
     </div>  
   )
