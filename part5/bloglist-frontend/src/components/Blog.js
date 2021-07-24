@@ -1,12 +1,26 @@
 import React, { useState } from 'react'
+import blogsService from '../services/blogs'
 
-const Blog = ({blog, user}) => {
+const Blog = ({blog, blogs, setBlogs}) => {
   const [detailsDisplayed, setDetailsDisplayed] = useState(false)
 
   const buttonLabel = detailsDisplayed ? 'hide' : 'view'
 
   const handleClick = () => {
     setDetailsDisplayed(!detailsDisplayed)
+  }
+
+  const incrementLikes = async () => {
+    const updatedBlog = {
+      user: blog.user,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: blog.likes++
+    }
+
+    const returnedBlog = await blogsService.update(blog.id, updatedBlog)
+    setBlogs(blogs.map())
   }
 
   const displayToggle = { display: detailsDisplayed ? '' : 'none' }
@@ -24,7 +38,7 @@ const Blog = ({blog, user}) => {
         <span style={ displayToggle }>
           <br/>
           {blog.url}<br/>
-          likes: {blog.likes} <button>like</button><br/>
+          likes: {blog.likes} <button onClick={ incrementLikes }>like</button><br/>
           {blog.user.id}
         </span>
     </div>  
