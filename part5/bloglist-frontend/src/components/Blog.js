@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogsService from '../services/blogs'
 
-const Blog = ({blog, blogs, setBlogs}) => {
+const Blog = ({ blog, blogs, setBlogs }) => {
   const [detailsDisplayed, setDetailsDisplayed] = useState(false)
 
   const buttonLabel = detailsDisplayed ? 'hide' : 'view'
@@ -16,11 +16,16 @@ const Blog = ({blog, blogs, setBlogs}) => {
       title: blog.title,
       author: blog.author,
       url: blog.url,
-      likes: blog.likes++
+      likes: (blog.likes + 1)
     }
 
     const returnedBlog = await blogsService.update(blog.id, updatedBlog)
-    setBlogs(blogs.map())
+
+    const updatedBlogs = blogs.map(blog => {
+      if (blog.id === returnedBlog.id) return returnedBlog
+      return blog
+    })
+    setBlogs(updatedBlogs)
   }
 
   const displayToggle = { display: detailsDisplayed ? '' : 'none' }
@@ -33,15 +38,15 @@ const Blog = ({blog, blogs, setBlogs}) => {
   }
 
   return (
-    <div style={ blogSytle }>
-      {blog.title}<i> by </i>{blog.author} <button onClick={ handleClick }>{ buttonLabel }</button>
-        <span style={ displayToggle }>
-          <br/>
-          {blog.url}<br/>
-          likes: {blog.likes} <button onClick={ incrementLikes }>like</button><br/>
-          {blog.user.id}
-        </span>
-    </div>  
+    <div style={blogSytle}>
+      {blog.title}<i> by </i>{blog.author} <button onClick={handleClick}>{buttonLabel}</button>
+      <span style={displayToggle}>
+        <br />
+        {blog.url}<br />
+        likes: {blog.likes} <button onClick={incrementLikes}>like</button><br />
+        {blog.user.id}
+      </span>
+    </div>
   )
 }
 

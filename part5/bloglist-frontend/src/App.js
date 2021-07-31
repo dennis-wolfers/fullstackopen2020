@@ -28,7 +28,7 @@ const App = () => {
   useEffect(() => {
     blogService
       .getAll()
-      .then(blogs => setBlogs( blogs ))  
+      .then(blogs => setBlogs(blogs))
   }, [user])
 
   const handleLogin = async (event) => {
@@ -71,51 +71,51 @@ const App = () => {
   }
 
   const blogForm = () => (
-    <Togglable buttonLabel="create new blog" ref={ blogFormRef }>
-      <BlogForm createBlog={ addBlog } />
+    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+      <BlogForm createBlog={addBlog} />
     </Togglable>
   )
 
   if (user === null) {
     return (
       <div>
-      <h2>log in to application</h2>
-      <Notification message={ notificationMessage } isError={ isError } />
-      <form onSubmit={handleLogin}>
-        <div>
-          username
-          <input
-          type='text'
-          value={username}
-          name='Username'
-          onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-          type='text'
-          value={password}
-          name='Password'
-          onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button type='submit'>login</button>
-      </form>
-    </div>
+        <h2>log in to application</h2>
+        <Notification message={notificationMessage} isError={isError} />
+        <form onSubmit={handleLogin}>
+          <div>
+            username
+            <input
+              type='text'
+              value={username}
+              name='Username'
+              onChange={({ target }) => setUsername(target.value)}
+            />
+          </div>
+          <div>
+            password
+            <input
+              type='text'
+              value={password}
+              name='Password'
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </div>
+          <button type='submit'>login</button>
+        </form>
+      </div>
     )
   }
 
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={ notificationMessage } isError={ isError } />
-      <p>{ user.name } logged in 
-        <button onClick={ handleLogout }>logout</button>
+      <Notification message={notificationMessage} isError={isError} />
+      <p>{user.name} logged in
+        <button onClick={handleLogout}>logout</button>
       </p>
       {blogForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} user={user} />
+        <Blog key={blog.id} blog={blog} blogs={blogs} setBlogs={setBlogs} user={user} />
       )}
     </div>
   )
