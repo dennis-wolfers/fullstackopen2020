@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogsService from '../services/blogs'
 
-const Blog = ({ blog, blogs, setBlogs }) => {
+const Blog = ({ blog, blogs, setBlogs, user }) => {
   const [detailsDisplayed, setDetailsDisplayed] = useState(false)
 
   const buttonLabel = detailsDisplayed ? 'hide' : 'view'
@@ -37,6 +37,17 @@ const Blog = ({ blog, blogs, setBlogs }) => {
     marginBottom: 5
   }
 
+  const removeBlog = () => {
+    console.log('remove blog')
+    console.log(`userId: ${user.id}\n blogUserId: ${blog.user.id}`)
+  }
+
+  const isOwner = user.id === blog.user.id
+
+  const displayRemoveButton = {
+    display: isOwner ? '' : 'none'
+  }
+
   return (
     <div style={blogSytle}>
       {blog.title}<i> by </i>{blog.author} <button onClick={handleClick}>{buttonLabel}</button>
@@ -45,6 +56,7 @@ const Blog = ({ blog, blogs, setBlogs }) => {
         {blog.url}<br />
         likes: {blog.likes} <button onClick={incrementLikes}>like</button><br />
         {blog.user.id}
+        <span style={displayRemoveButton}><br /><button onClick={removeBlog}>remove</button></span>
       </span>
     </div>
   )
