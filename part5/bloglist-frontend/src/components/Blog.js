@@ -38,7 +38,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   }
 
   const removeBlog = async () => {
-    await blogsService.delete(blog.id)
+    await blogsService.remove(blog.id)
 
     const updatedBlogs = blogs.filter( thisBlog => {
       return thisBlog.id !== blog.id
