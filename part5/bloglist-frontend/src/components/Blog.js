@@ -38,13 +38,17 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   }
 
   const removeBlog = async () => {
-    await blogsService.remove(blog.id)
+    const userConfirmed = window.confirm(`Remove the "${blog.title}" blog from the list?`)
 
-    const updatedBlogs = blogs.filter( thisBlog => {
-      return thisBlog.id !== blog.id
-    })
+    if (userConfirmed) {
+        await blogsService.remove(blog.id)
 
-    setBlogs(updatedBlogs)
+        const updatedBlogs = blogs.filter( thisBlog => {
+        return thisBlog.id !== blog.id
+      })
+
+      setBlogs(updatedBlogs)
+    }
   }
 
   const isOwner = user.id === blog.user.id
