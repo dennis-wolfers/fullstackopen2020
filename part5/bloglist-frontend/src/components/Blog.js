@@ -41,9 +41,9 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     const userConfirmed = window.confirm(`Remove the "${blog.title}" blog from the list?`)
 
     if (userConfirmed) {
-        await blogsService.remove(blog.id)
+      await blogsService.remove(blog.id)
 
-        const updatedBlogs = blogs.filter( thisBlog => {
+      const updatedBlogs = blogs.filter( thisBlog => {
         return thisBlog.id !== blog.id
       })
 
