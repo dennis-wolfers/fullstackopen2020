@@ -51,7 +51,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
     }
   }
 
-  const isOwner = user.id === blog.user.id
+  const isOwner = true //user.id === blog.user.id
 
   const displayRemoveButton = {
     display: isOwner ? '' : 'none'
@@ -60,7 +60,7 @@ const Blog = ({ blog, blogs, setBlogs, user }) => {
   return (
     <div style={blogSytle}>
       {blog.title}<i> by </i>{blog.author} <button onClick={handleClick}>{buttonLabel}</button>
-      <span style={displayToggle}>
+      <span style={displayToggle} className='details'>
         <br />
         {blog.url}<br />
         likes: {blog.likes} <button onClick={incrementLikes}>like</button><br />
