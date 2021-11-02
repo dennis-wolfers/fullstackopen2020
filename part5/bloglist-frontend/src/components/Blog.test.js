@@ -20,4 +20,5 @@ test('renders blog title and author, but not URL or likes by default', () => {
 
   expect(component.container).toHaveTextContent('blog title')
   expect(component.container).toHaveTextContent('blog author')
+  expect(component.container.querySelector('.details')).toHaveStyle('display: none')
 })
